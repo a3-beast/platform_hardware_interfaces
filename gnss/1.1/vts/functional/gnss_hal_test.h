@@ -107,15 +107,12 @@ class GnssHalTest : public ::testing::VtsHalHidlTargetTestBase {
     void SetUpGnssCallback();
 
     /*
-     * StartAndCheckFirstLocation:
-     *   Helper function to start location, and check the first one.
-     *
-     *   <p> Note this leaves the Location request active, to enable Stop call vs. other call
-     *   reordering tests.
+     * StartAndGetSingleLocation:
+     * Helper function to get one Location and check fields
      *
      * returns  true if a location was successfully generated
      */
-    bool StartAndCheckFirstLocation();
+    bool StartAndGetSingleLocation();
 
     /*
      * CheckLocation:
