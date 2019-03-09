@@ -43,16 +43,7 @@ TEST_F(RadioHidlTest_v1_2, startNetworkScan) {
     if (cardStatus.base.cardState == CardState::ABSENT) {
         ASSERT_TRUE(CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error, {RadioError::SIM_ABSENT}));
     } else if (cardStatus.base.cardState == CardState::PRESENT) {
-        // REQUEST_NOT_SUPPORTED should not be allowed as it is not an optional API. However, the
-        // comments in the hal were not updated to indicate that, hence allowing it as a valid
-        // error for now. This should be fixed correctly, possibly in a future version of the hal
-        // (b/110421924). This is being allowed because some vendors do not support
-        // this request on dual sim devices.
-        // OPERATION_NOT_ALLOWED should not be allowed; however, some vendors do not support the
-        // required manual GSM search functionality. This is tracked in b/112206766.
-        ASSERT_TRUE(CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error,
-                                     {RadioError::NONE, RadioError::REQUEST_NOT_SUPPORTED,
-                                      RadioError::OPERATION_NOT_ALLOWED}));
+        ASSERT_TRUE(CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error, {RadioError::NONE}));
     }
 }
 
@@ -78,8 +69,7 @@ TEST_F(RadioHidlTest_v1_2, startNetworkScan_InvalidArgument) {
                                      {RadioError::SIM_ABSENT, RadioError::INVALID_ARGUMENTS}));
     } else if (cardStatus.base.cardState == CardState::PRESENT) {
         ASSERT_TRUE(
-            CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error,
-                             {RadioError::INVALID_ARGUMENTS, RadioError::REQUEST_NOT_SUPPORTED}));
+            CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error, {RadioError::INVALID_ARGUMENTS}));
     }
 }
 
@@ -115,8 +105,7 @@ TEST_F(RadioHidlTest_v1_2, startNetworkScan_InvalidInterval1) {
                                      {RadioError::SIM_ABSENT, RadioError::INVALID_ARGUMENTS}));
     } else if (cardStatus.base.cardState == CardState::PRESENT) {
         ASSERT_TRUE(
-            CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error,
-                             {RadioError::INVALID_ARGUMENTS, RadioError::REQUEST_NOT_SUPPORTED}));
+            CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error, {RadioError::INVALID_ARGUMENTS}));
     }
 }
 
@@ -152,8 +141,7 @@ TEST_F(RadioHidlTest_v1_2, startNetworkScan_InvalidInterval2) {
                                      {RadioError::SIM_ABSENT, RadioError::INVALID_ARGUMENTS}));
     } else if (cardStatus.base.cardState == CardState::PRESENT) {
         ASSERT_TRUE(
-            CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error,
-                             {RadioError::INVALID_ARGUMENTS, RadioError::REQUEST_NOT_SUPPORTED}));
+            CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error, {RadioError::INVALID_ARGUMENTS}));
     }
 }
 
@@ -189,8 +177,7 @@ TEST_F(RadioHidlTest_v1_2, startNetworkScan_InvalidMaxSearchTime1) {
                                      {RadioError::SIM_ABSENT, RadioError::INVALID_ARGUMENTS}));
     } else if (cardStatus.base.cardState == CardState::PRESENT) {
         ASSERT_TRUE(
-            CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error,
-                             {RadioError::INVALID_ARGUMENTS, RadioError::REQUEST_NOT_SUPPORTED}));
+            CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error, {RadioError::INVALID_ARGUMENTS}));
     }
 }
 
@@ -226,8 +213,7 @@ TEST_F(RadioHidlTest_v1_2, startNetworkScan_InvalidMaxSearchTime2) {
                                      {RadioError::SIM_ABSENT, RadioError::INVALID_ARGUMENTS}));
     } else if (cardStatus.base.cardState == CardState::PRESENT) {
         ASSERT_TRUE(
-            CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error,
-                             {RadioError::INVALID_ARGUMENTS, RadioError::REQUEST_NOT_SUPPORTED}));
+            CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error, {RadioError::INVALID_ARGUMENTS}));
     }
 }
 
@@ -263,8 +249,7 @@ TEST_F(RadioHidlTest_v1_2, startNetworkScan_InvalidPeriodicity1) {
                                      {RadioError::SIM_ABSENT, RadioError::INVALID_ARGUMENTS}));
     } else if (cardStatus.base.cardState == CardState::PRESENT) {
         ASSERT_TRUE(
-            CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error,
-                             {RadioError::INVALID_ARGUMENTS, RadioError::REQUEST_NOT_SUPPORTED}));
+            CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error, {RadioError::INVALID_ARGUMENTS}));
     }
 }
 
@@ -300,8 +285,7 @@ TEST_F(RadioHidlTest_v1_2, startNetworkScan_InvalidPeriodicity2) {
                                      {RadioError::SIM_ABSENT, RadioError::INVALID_ARGUMENTS}));
     } else if (cardStatus.base.cardState == CardState::PRESENT) {
         ASSERT_TRUE(
-            CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error,
-                             {RadioError::INVALID_ARGUMENTS, RadioError::REQUEST_NOT_SUPPORTED}));
+            CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error, {RadioError::INVALID_ARGUMENTS}));
     }
 }
 
@@ -320,9 +304,7 @@ TEST_F(RadioHidlTest_v1_2, startNetworkScan_GoodRequest1) {
         .type = ScanType::ONE_SHOT,
         .interval = 60,
         .specifiers = {specifier},
-        // Some vendor may not support max search time of 360s.
-        // This issue is tracked in b/112205669.
-        .maxSearchTime = 300,
+        .maxSearchTime = 600,
         .incrementalResults = false,
         .incrementalResultsPeriodicity = 10};
 
@@ -338,9 +320,7 @@ TEST_F(RadioHidlTest_v1_2, startNetworkScan_GoodRequest1) {
         ASSERT_TRUE(CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error,
                                      {RadioError::NONE, RadioError::SIM_ABSENT}));
     } else if (cardStatus.base.cardState == CardState::PRESENT) {
-        ASSERT_TRUE(CheckAnyOfErrors(
-            radioRsp_v1_2->rspInfo.error,
-            {RadioError::NONE, RadioError::REQUEST_NOT_SUPPORTED}));
+        ASSERT_TRUE(CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error, {RadioError::NONE}));
     }
 }
 
@@ -359,9 +339,7 @@ TEST_F(RadioHidlTest_v1_2, startNetworkScan_GoodRequest2) {
         .type = ScanType::ONE_SHOT,
         .interval = 60,
         .specifiers = {specifier},
-        // Some vendor may not support max search time of 360s.
-        // This issue is tracked in b/112205669.
-        .maxSearchTime = 300,
+        .maxSearchTime = 600,
         .incrementalResults = false,
         .incrementalResultsPeriodicity = 10,
         .mccMncs = {"310410"}};
@@ -378,9 +356,7 @@ TEST_F(RadioHidlTest_v1_2, startNetworkScan_GoodRequest2) {
         ASSERT_TRUE(CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error,
                                      {RadioError::NONE, RadioError::SIM_ABSENT}));
     } else if (cardStatus.base.cardState == CardState::PRESENT) {
-        ASSERT_TRUE(CheckAnyOfErrors(
-            radioRsp_v1_2->rspInfo.error,
-            {RadioError::NONE, RadioError::REQUEST_NOT_SUPPORTED}));
+        ASSERT_TRUE(CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error, {RadioError::NONE}));
     }
 }
 
@@ -534,11 +510,7 @@ TEST_F(RadioHidlTest_v1_2, setLinkCapacityReportingCriteria_invalidHysteresisDlK
 
     ALOGI("setLinkCapacityReportingCriteria_invalidHysteresisDlKbps, rspInfo.error = %s\n",
           toString(radioRsp_v1_2->rspInfo.error).c_str());
-    // Allow REQUEST_NOT_SUPPORTED as setLinkCapacityReportingCriteria() may not be supported for
-    // GERAN
-    ASSERT_TRUE(
-        CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error,
-                         {RadioError::INVALID_ARGUMENTS, RadioError::REQUEST_NOT_SUPPORTED}));
+    ASSERT_TRUE(CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error, {RadioError::INVALID_ARGUMENTS}));
 }
 
 /*
@@ -559,11 +531,7 @@ TEST_F(RadioHidlTest_v1_2, setLinkCapacityReportingCriteria_invalidHysteresisUlK
 
     ALOGI("setLinkCapacityReportingCriteria_invalidHysteresisUlKbps, rspInfo.error = %s\n",
           toString(radioRsp_v1_2->rspInfo.error).c_str());
-    // Allow REQUEST_NOT_SUPPORTED as setLinkCapacityReportingCriteria() may not be supported for
-    // GERAN
-    ASSERT_TRUE(
-        CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error,
-                         {RadioError::INVALID_ARGUMENTS, RadioError::REQUEST_NOT_SUPPORTED}));
+    ASSERT_TRUE(CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error, {RadioError::INVALID_ARGUMENTS}));
 }
 
 /*
@@ -581,10 +549,7 @@ TEST_F(RadioHidlTest_v1_2, setLinkCapacityReportingCriteria_emptyParams) {
 
     ALOGI("setLinkCapacityReportingCriteria_emptyParams, rspInfo.error = %s\n",
           toString(radioRsp_v1_2->rspInfo.error).c_str());
-    // Allow REQUEST_NOT_SUPPORTED as setLinkCapacityReportingCriteria() may not be supported for
-    // GERAN
-    ASSERT_TRUE(CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error,
-                                 {RadioError::NONE, RadioError::REQUEST_NOT_SUPPORTED}));
+    ASSERT_TRUE(CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error, {RadioError::NONE}));
 }
 
 /*
@@ -603,10 +568,7 @@ TEST_F(RadioHidlTest_v1_2, setLinkCapacityReportingCriteria_Geran) {
 
     ALOGI("setLinkCapacityReportingCriteria_invalidHysteresisUlKbps, rspInfo.error = %s\n",
           toString(radioRsp_v1_2->rspInfo.error).c_str());
-    // Allow REQUEST_NOT_SUPPORTED as setLinkCapacityReportingCriteria() may not be supported for
-    // GERAN
-    ASSERT_TRUE(CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error,
-                                 {RadioError::NONE, RadioError::REQUEST_NOT_SUPPORTED}));
+    ASSERT_TRUE(CheckAnyOfErrors(radioRsp_v1_2->rspInfo.error, {RadioError::NONE}));
 }
 
 /*
@@ -704,7 +666,7 @@ TEST_F(RadioHidlTest_v1_2, deactivateDataCall_1_2) {
  * Test IRadio.getCellInfoList() for the response returned.
  */
 TEST_F(RadioHidlTest_v1_2, getCellInfoList_1_2) {
-    serial = GetRandomSerialNumber();
+    int serial = GetRandomSerialNumber();
 
     Return<void> res = radio_v1_2->getCellInfoList(serial);
     ASSERT_OK(res);
@@ -722,7 +684,7 @@ TEST_F(RadioHidlTest_v1_2, getCellInfoList_1_2) {
  * Test IRadio.getVoiceRegistrationState() for the response returned.
  */
 TEST_F(RadioHidlTest_v1_2, getVoiceRegistrationState) {
-    serial = GetRandomSerialNumber();
+    int serial = GetRandomSerialNumber();
 
     Return<void> res = radio_v1_2->getVoiceRegistrationState(serial);
     ASSERT_OK(res);
@@ -740,7 +702,7 @@ TEST_F(RadioHidlTest_v1_2, getVoiceRegistrationState) {
  * Test IRadio.getDataRegistrationState() for the response returned.
  */
 TEST_F(RadioHidlTest_v1_2, getDataRegistrationState) {
-    serial = GetRandomSerialNumber();
+    int serial = GetRandomSerialNumber();
 
     Return<void> res = radio_v1_2->getDataRegistrationState(serial);
     ASSERT_OK(res);
@@ -759,7 +721,7 @@ TEST_F(RadioHidlTest_v1_2, getDataRegistrationState) {
  * Test IRadio.getAvailableBandModes() for the response returned.
  */
 TEST_F(RadioHidlTest_v1_2, getAvailableBandModes) {
-    serial = GetRandomSerialNumber();
+    int serial = GetRandomSerialNumber();
 
     Return<void> res = radio_v1_2->getAvailableBandModes(serial);
     ASSERT_OK(res);

@@ -33,19 +33,17 @@ TEST_F(RadioHidlTest_v1_1, setSimCardPower_1_1) {
     ASSERT_TRUE(CheckAnyOfErrors(radioRsp_v1_1->rspInfo.error,
                                  {RadioError::NONE, RadioError::REQUEST_NOT_SUPPORTED,
                                   RadioError::INVALID_ARGUMENTS, RadioError::RADIO_NOT_AVAILABLE}));
-    if (radioRsp_v1_1->rspInfo.error == RadioError::NONE) {
-        /* Wait some time for setting sim power down and then verify it */
-        updateSimCardStatus();
-        auto startTime = std::chrono::system_clock::now();
-        while (cardStatus.cardState != CardState::ABSENT &&
+    /* Wait some time for setting sim power down and then verify it */
+    updateSimCardStatus();
+    auto startTime = std::chrono::system_clock::now();
+    while (cardStatus.cardState != CardState::ABSENT &&
            std::chrono::duration_cast<chrono::seconds>(std::chrono::system_clock::now() - startTime)
                    .count() < 80) {
-            /* Set 2 seconds as interval to check card status */
-            sleep(2);
-            updateSimCardStatus();
-        }
-        EXPECT_EQ(CardState::ABSENT, cardStatus.cardState);
+        /* Set 2 seconds as interval to check card status */
+        sleep(2);
+        updateSimCardStatus();
     }
+    EXPECT_EQ(CardState::ABSENT, cardStatus.cardState);
 
     /* Test setSimCardPower power up */
     serial = GetRandomSerialNumber();
@@ -61,11 +59,10 @@ TEST_F(RadioHidlTest_v1_1, setSimCardPower_1_1) {
      * If the sim card status for the testing environment is PRESENT,
      * verify if sim status is reset back.
      */
-    if (cardStateForTest == CardState::PRESENT &&
-        radioRsp_v1_1->rspInfo.error == RadioError::NONE) {
+    if (cardStateForTest == CardState::PRESENT) {
         /* Wait some time for resetting back to sim power on and then verify it */
         updateSimCardStatus();
-        auto startTime = std::chrono::system_clock::now();
+        startTime = std::chrono::system_clock::now();
         while (cardStatus.cardState != CardState::PRESENT &&
                std::chrono::duration_cast<chrono::seconds>(std::chrono::system_clock::now() -
                                                            startTime)

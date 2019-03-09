@@ -29,9 +29,6 @@ cc_test {
         "libicuuc_stubdata",
         "libxml2",
     ],
-    shared_libs: [
-        "libfmq",
-    ],
     header_libs: [
         "android.hardware.audio.common.util@all-versions",
     ],
